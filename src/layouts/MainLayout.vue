@@ -10,11 +10,11 @@
 			</q-toolbar>
 		</q-header>
 
-		<q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+		<q-drawer v-model="leftDrawerOpen" bordered>
 			<q-list>
 				<q-item-label header> Essential Links </q-item-label>
 
-				<EssentialLink v-for="link in essentialLinks" :key="link.title" v-bind="link" />
+				<EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
 			</q-list>
 		</q-drawer>
 
@@ -24,8 +24,8 @@
 	</q-layout>
 </template>
 
-<script lang="ts">
-import { defineComponent, ref } from "vue";
+<script setup lang="ts">
+import { ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
 
 const linksList = [
@@ -43,23 +43,9 @@ const linksList = [
 	},
 ];
 
-export default defineComponent({
-	name: "MainLayout",
+const leftDrawerOpen = ref(false);
 
-	components: {
-		EssentialLink,
-	},
-
-	setup() {
-		const leftDrawerOpen = ref(false);
-
-		return {
-			essentialLinks: linksList,
-			leftDrawerOpen,
-			toggleLeftDrawer() {
-				leftDrawerOpen.value = !leftDrawerOpen.value;
-			},
-		};
-	},
-});
+function toggleLeftDrawer() {
+	leftDrawerOpen.value = !leftDrawerOpen.value;
+}
 </script>
