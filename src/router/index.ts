@@ -28,10 +28,12 @@ export default route(function (/* { store, ssrContext } */) {
 	Router.beforeEach((to) => {
 		const { isLoggedIn } = useAuthUser();
 
-		console.log(isLoggedIn.value);
-
 		if (!isLoggedIn.value && to.meta.requiresAuth) {
 			return { name: "login" };
+		}
+
+		if (isLoggedIn.value && to.name === "login") {
+			return { name: "index" };
 		}
 	});
 
