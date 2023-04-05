@@ -1,13 +1,11 @@
 import { ref, computed, onMounted } from "vue";
+import { defineStore } from "pinia";
 import useSupabase from "boot/supabase";
 
 const project = process.env.GAME;
-// import { useRouter } from "vue-router";
-// const router = useRouter();
 
-const tracks = ref([]);
-
-export default function useAuthUser() {
+export const useTracksStore = defineStore("counter", () => {
+	const tracks = ref([]);
 	const { supabase } = useSupabase();
 
 	const fetchTracks = async () => {
@@ -30,4 +28,4 @@ export default function useAuthUser() {
 	});
 
 	return { tracks, fetchTracks };
-}
+});
