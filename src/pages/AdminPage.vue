@@ -21,7 +21,7 @@
 							<q-checkbox v-model="props.row.selected" />
 						</q-td>
 						<q-td key="file" :props="props" class="items-center">
-							{{ props.row.file }}
+							{{ props.row.filename }}
 						</q-td>
 						<q-td key="file" :props="props" class="items-center">
 							<span v-if="props.row.inDB">✅</span>
@@ -42,16 +42,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useCategoriesStore } from "src/stores/store-categories";
 import { useTracksStore } from "src/stores/store-tracks";
-const categoriesStore = useCategoriesStore();
-const tracksStore = useTracksStore();
 
-const { categories } = storeToRefs(categoriesStore);
-const { tracks } = storeToRefs(tracksStore);
-const { addTrackToDB /* , fetchTracks */ } = tracksStore;
+const { categories } = storeToRefs(useCategoriesStore());
+const { tracks } = storeToRefs(useTracksStore());
+const { addTrackToDB } = useTracksStore();
 
 const _filesystemTracks = import.meta.glob("/public/music/*", { eager: true }) || [];
 
@@ -72,7 +70,7 @@ const filesystemTracks = computed(() => {
 			const filename = track.name.match(/[^/]+\.mp3$/)?.[0];
 
 			if (filename) {
-				return { file: filename.replace(".mp3", "") };
+				return { filename: filename.replace(".mp3", "") };
 			}
 
 			return null;
@@ -82,24 +80,24 @@ const filesystemTracks = computed(() => {
 	return out;
 });
 
-console.log(tracks.value);
+const allTracks = computed(() => {
+	let out = tracks.value.map((t) => ({ ...t, inDB: true, selected: false }));
 
-const allTracks = computed(() => [
-	...tracks.value,
+	filesystemTracks.value.forEach((t) => {
+		const existingTrack = out.find((x) => x.filename === t.filename);
+		if (!existingTrack) {
+			out.push({ ...t, inDB: false, selected: false });
+		}
+	});
 
-	/* filesystemTracks.value.forEach((t) => {
-				out.push(t);
-			}); */
-]);
-
-console.log(allTracks.value);
+	return out;
+});
 
 const tablePagination = {
-	sortBy: "file",
-	descending: false,
+	sortBy: "filename",
+	descending: true,
 	page: 1,
 	rowsPerPage: 0,
-	// rowsNumber: xx if getting data from a server
 };
 
 const tableColumns = [
@@ -108,5 +106,9 @@ const tableColumns = [
 	{ name: "isInDB", required: false, label: "In DB", align: "left", field: (row) => row.inDB, format: (val) => `${val}`, sortable: true },
 ];
 
-const tableData = computed(() => allTracks.value.map((track) => ({ ...track, selected: false, isInDB: false })));
+const tableData = ref(allTracks.value);
+
+watch(allTracks, (newVal) => {
+	tableData.value = newVal;
+});
 </script>

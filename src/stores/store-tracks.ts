@@ -23,8 +23,6 @@ export const useTracksStore = defineStore("tracks", () => {
 
 		track.project = project;
 
-		console.log(track);
-
 		return track;
 	}
 
@@ -40,9 +38,7 @@ export const useTracksStore = defineStore("tracks", () => {
 			throw error;
 		}
 
-		console.log(data);
 		tracks.value = data;
-		console.log(tracks.value);
 	}
 
 	async function addTrackToDB(track) {
