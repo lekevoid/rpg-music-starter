@@ -1,7 +1,7 @@
 import { ref, computed } from "vue";
 import useSupabase from "boot/supabase";
 
-import { useRouter } from "vue-router";
+// import { useRouter } from "vue-router";
 // const router = useRouter();
 
 const user = ref(null);

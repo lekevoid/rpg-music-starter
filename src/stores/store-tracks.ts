@@ -56,8 +56,8 @@ export const useTracksStore = defineStore("tracks", () => {
 		}
 
 		if (data) {
-			console.log(data);
-			tracks.value.push(data);
+			console.log(data[0]);
+			tracks.value.push(data[0]);
 		}
 	}
 
